@@ -83,7 +83,6 @@ public class OptimizationService {
         optimizationResult.setTotalCarbon(pathResult.totalCarbon());
         optimizationResult.setOptimizedAt(LocalDateTime.now());
         optimizationResult.setPath(pathJson);
-        optimizationResultRepository.save(optimizationResult);
 
         OptimizationResponseDTO response = toResponse(shipmentId, optimizationType, pathResult, totalTimeWithTransfer, graph);
 
@@ -103,6 +102,12 @@ public class OptimizationService {
             response.setPredictedEtaHours(null);
             response.setEtaPredictionAvailable(false);
         }
+
+        // Persist the prediction with the result: without it, a page reload calls
+        // getByShipmentId() and would report the ML service as offline even when
+        // the prediction succeeded above.
+        optimizationResult.setPredictedEtaHours(response.getPredictedEtaHours());
+        optimizationResultRepository.save(optimizationResult);
 
         return response;
     }
@@ -125,6 +130,8 @@ public class OptimizationService {
                 .totalCarbon(optimizationResult.getTotalCarbon() != null ? optimizationResult.getTotalCarbon() : 0.0)
                 .cities(cityNames)
                 .routes(routeSteps)
+                .predictedEtaHours(optimizationResult.getPredictedEtaHours())
+                .etaPredictionAvailable(optimizationResult.getPredictedEtaHours() != null)
                 .build();
     }
 

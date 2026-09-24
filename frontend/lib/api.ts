@@ -57,7 +57,13 @@ export type DashboardStats = {
   totalCarbon: number;
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+// NEXT_PUBLIC_BACKEND_URL is the documented name (.env.local / Render dashboard).
+// NEXT_PUBLIC_API_URL is kept as an alias so older setups keep working, and the
+// localhost default means a missing env file can never produce `undefined/...` URLs.
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_BACKEND_URL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:8080";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {

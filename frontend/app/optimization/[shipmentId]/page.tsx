@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getOptimizationResult } from "@/lib/api";
+import { ReoptimizeButton } from "./reoptimize-button";
 
 export default async function OptimizationResultsPage({
   params,
@@ -13,9 +14,15 @@ export default async function OptimizationResultsPage({
 
   return (
     <section className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Optimization Results</h1>
-        <p className="text-sm text-muted-foreground">Shipment ID: {shipmentId}</p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Optimization Results</h1>
+          <p className="text-sm text-muted-foreground">Shipment ID: {shipmentId}</p>
+        </div>
+        <ReoptimizeButton
+          shipmentId={Number(shipmentId)}
+          optimizationType={result.optimizationType}
+        />
       </div>
 
       <Card>
@@ -60,7 +67,9 @@ export default async function OptimizationResultsPage({
             <div className="rounded-lg border border-dashed p-4">
               <p className="text-xs text-muted-foreground">Predicted Delivery ETA (ML)</p>
               <p className="text-sm text-muted-foreground">
-                Not available — ML prediction service is currently offline
+                Not predicted when this result was computed — the ML service
+                was unavailable, or the result predates ETA persistence. Re-run
+                the optimization to ask the ML service again.
               </p>
             </div>
           )}

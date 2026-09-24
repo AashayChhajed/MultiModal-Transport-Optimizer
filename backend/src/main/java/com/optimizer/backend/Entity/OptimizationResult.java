@@ -32,6 +32,13 @@ public class OptimizationResult {
 
     private LocalDateTime optimizedAt;
 
+    /**
+     * ETA predicted by the ML service when this result was computed.
+     * Null when the ML service was unavailable at optimize time, so the
+     * stored result can distinguish "not predicted" from "service offline".
+     */
+    private Double predictedEtaHours;
+
     @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
     private String path;
